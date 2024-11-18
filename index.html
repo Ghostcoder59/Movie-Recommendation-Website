@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommender System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Movie Recommender System</h1>
+        <p>Welcome! Get recommendations based on your favorite movie.</p>
+
+        <form method="POST">
+            <label for="movie">Select a movie:</label>
+            <select name="movie" id="movie">
+                {% for movie in movies %}
+                    <option value="{{ movie }}">{{ movie }}</option>
+                {% endfor %}
+            </select>
+            <button class="movie-button" type="submit">Get Recommendations</button>
+        </form>
+
+        {% if recommended_movies %}
+            <h2>Recommended Movies</h2>
+            <div class="carousel-container">
+                <button class="carousel-prev" onclick="moveSlide(-1)">&#10094;</button>
+                <div class="carousel">
+                    {% for name, poster, trailer in recommended_movies %}
+                        <div class="movie-card">
+                            <img src="{{ poster }}" alt="{{ name }} Poster">
+                            <h3>{{ name }}</h3>
+                            {% if trailer %}
+                                <a href="{{ trailer }}" class="trailer-link" target="_blank">Watch Trailer</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <button class="carousel-next" onclick="moveSlide(1)">&#10095;</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        let currentIndex = 0;
+    
+        function moveSlide(step) {
+            const carousel = document.querySelector('.carousel');
+            const totalSlides = document.querySelectorAll('.movie-card').length;
+            currentIndex += step;
+    
+            if (currentIndex < 0) {
+                currentIndex = totalSlides - 1; // Loop back to the last movie
+            } else if (currentIndex >= totalSlides) {
+                currentIndex = 0; // Loop back to the first movie
+            }
+    
+            // Calculate offset based on the width of a card and the current index
+            const offset = -currentIndex * (document.querySelector('.movie-card').offsetWidth + 20); // 20px for margin
+            carousel.style.transform = `translateX(${offset}px)`;
+        }
+    </script>
+</body>
+</html>
